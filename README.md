@@ -33,6 +33,7 @@ RAG_assistante/
 │   └── templates/            # HTML templates for the Flask app
 │       └── index.html        # Main UI template
 ├── data/                     # Directory for storing data files
+├── images/                   # Directory for storing app screenshots
 └── RAG_Medcal_Chatbot.egg-info/  # Metadata for the Python package
 ```
 
@@ -43,26 +44,84 @@ RAG_assistante/
 ### 1. **Flask Application**
 - **File**: `app/application.py`
 - **Description**: The entry point for the Flask web application. It handles user interactions, manages sessions, and integrates the QA chain for generating responses.
+- **How to Run**: Ensure the virtual environment is activated and run:
+  ```bash
+  python app/application.py
+  ```
+  - **Required Keys**: Add `HF_TOKEN` to your `.env` file for HuggingFace integration.
 
 ### 2. **Common Utilities**
 - **Logger** (`app/common/logger.py`): Provides a centralized logging mechanism.
 - **CustomException** (`app/common/custom_exception.py`): Handles custom exceptions with detailed error messages.
 
 ### 3. **Core Components**
-- **Data Loader** (`app/components/data_loader.py`): Processes PDF files and stores them in the vector store.
-- **Embeddings** (`app/components/embeddings.py`): Loads the HuggingFace embedding model.
-- **LLM Loader** (`app/components/llm.py`): Loads the language model using Groq.
-- **PDF Loader** (`app/components/pdf_loader.py`): Reads PDF files and splits them into text chunks.
-- **Retriever** (`app/components/retriever.py`): Sets up the QA chain using a retriever and custom prompts.
-- **Vector Store** (`app/components/vector_store.py`): Manages the FAISS-based vector store for document retrieval.
+- **Data Loader** (`app/components/data_loader.py`):
+  - **Description**: Processes PDF files and stores them in the vector store.
+  - **How to Run**: Run the script directly to process PDFs:
+    ```bash
+    python app/components/data_loader.py
+    ```
+  - **Required Keys**: Ensure `DB_FAISS_PATH` is set in `app/config/config.py`.
+
+- **Embeddings** (`app/components/embeddings.py`):
+  - **Description**: Loads the HuggingFace embedding model.
+  - **How to Use**: Called internally by other components.
+
+- **LLM Loader** (`app/components/llm.py`):
+  - **Description**: Loads the language model using Groq.
+  - **Required Keys**: Add `GROQ_API_KEY` to your `.env` file.
+
+- **PDF Loader** (`app/components/pdf_loader.py`):
+  - **Description**: Reads PDF files and splits them into text chunks.
+  - **How to Use**: Called internally by `data_loader.py`.
+
+- **Retriever** (`app/components/retriever.py`):
+  - **Description**: Sets up the QA chain using a retriever and custom prompts.
+  - **How to Use**: Called internally by the Flask app.
+
+- **Vector Store** (`app/components/vector_store.py`):
+  - **Description**: Manages the FAISS-based vector store for document retrieval.
+  - **How to Use**: Called internally by `retriever.py`.
 
 ### 4. **Configuration**
 - **File**: `app/config/config.py`
 - **Description**: Contains configuration variables such as HuggingFace model ID, database paths, and chunking parameters.
+- **How to Configure**: Update the following variables as needed:
+  - `HF_TOKEN`: HuggingFace token.
+  - `DB_FAISS_PATH`: Path to the FAISS vector store.
+  - `DATA_PATH`: Path to the data directory.
 
 ### 5. **Templates**
 - **File**: `app/templates/index.html`
 - **Description**: Provides the user interface for interacting with the chatbot.
+
+---
+
+## Application Architecture
+
+Below is a diagram illustrating the architecture of the RAG Medical Assistant:
+
+```mermaid
+graph TD
+    A[User] -->|Sends Query| B[Flask Application]
+    B -->|Processes Query| C[Retriever]
+    C -->|Fetches Context| D[Vector Store]
+    D -->|Provides Relevant Data| C
+    C -->|Passes Context| E[Language Model (LLM)]
+    E -->|Generates Response| B
+    B -->|Displays Response| A
+```
+
+---
+
+## Screenshots
+Below are some screenshots of the application:
+
+### Home Page
+<!-- ![Home Page](images/home_page.png) -->
+
+### Chat Interface
+![Chat Interface](images/CAPTURE.PNG)
 
 ---
 
