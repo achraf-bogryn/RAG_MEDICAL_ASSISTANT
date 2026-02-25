@@ -187,10 +187,6 @@ Below are some screenshots of the application:
 - Enhance the user interface with additional features.
 - Integrate more advanced language models for better responses.
 
----
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
 
