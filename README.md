@@ -124,11 +124,10 @@ Below is a text-based representation of the architecture of the RAG Medical Assi
 ## Screenshots
 Below are some screenshots of the application:
 
-### Home Page
-<!-- ![Home Page](images/home_page.png) -->
+
 
 ### Chat Interface
-![Chat Interface](images\Capture.PNG)
+![Home Page](images/Capture.PNG)
 
 ---
 
