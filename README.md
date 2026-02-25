@@ -99,18 +99,25 @@ RAG_assistante/
 
 ## Application Architecture
 
-Below is a diagram illustrating the architecture of the RAG Medical Assistant:
+Below is a text-based representation of the architecture of the RAG Medical Assistant:
 
-```mermaid
-graph TD
-    A[User] -->|Sends Query| B[Flask Application]
-    B -->|Processes Query| C[Retriever]
-    C -->|Fetches Context| D[Vector Store]
-    D -->|Provides Relevant Data| C
-    C -->|Passes Context| E[Language Model (LLM)]
-    E -->|Generates Response| B
-    B -->|Displays Response| A
-```
+1. **User Interaction**:
+   - The user sends a query through the web interface.
+
+2. **Flask Application**:
+   - The Flask app processes the query and forwards it to the retriever.
+
+3. **Retriever**:
+   - The retriever fetches relevant context from the vector store.
+
+4. **Vector Store**:
+   - The vector store provides the most relevant data based on the query.
+
+5. **Language Model (LLM)**:
+   - The LLM generates a response using the retrieved context.
+
+6. **Response Display**:
+   - The Flask app displays the generated response back to the user.
 
 ---
 
@@ -121,7 +128,7 @@ Below are some screenshots of the application:
 <!-- ![Home Page](images/home_page.png) -->
 
 ### Chat Interface
-![Chat Interface](images/CAPTURE.PNG)
+![Chat Interface](images\Capture.PNG)
 
 ---
 
