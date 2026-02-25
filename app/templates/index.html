@@ -1,0 +1,452 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>🔍 AI Medical Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .chat-container { max-width: 700px; margin: 0 auto; }
+        .message { margin-bottom: 1rem; padding: 0.75rem; border-radius: 10px; }
+        .user { background-color: #d1e7ff; text-align: right; }
+        .assistant { background-color: #f1f1f1; text-align: left; }
+        form { margin-top: 2rem; }
+        textarea { width: 100%; height: 3rem; padding: 0.5rem; font-size: 1rem; }
+        button { padding: 0.5rem 1rem; font-size: 1rem; margin-top: 0.5rem; }
+        .error { color: red; }
+        .clear-btn { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>🔍 AI Medical Chatbot New Change</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <div id="chat-box">
+            {% for msg in messages %}
+                <div class="message {{ msg.role }}">
+                    <strong>{{ msg.role|capitalize }}:</strong><br />
+                    {{ msg.content | safe | nl2br }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="post" action="{{ url_for('index') }}">
+            <textarea name="prompt" placeholder="Ask a medical question..." required></textarea>
+            <br />
+            <button type="submit">Send</button>
+        </form>
+
+        <form method="get" action="{{ url_for('clear') }}">
+            <button type="submit" class="clear-btn">Clear Chat</button>
+        </form>
+    </div>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Medical Chatbot</title>
+
+  <style>
+    :root{
+      --bg1:#0b1a2a;
+      --bg2:#0f2a3c;
+      --card:#ffffff;
+      --muted:#cfe6ff;
+      --accent:#1ee3b5;
+      --text:#0b1320;
+      --soft:#f5f7fb;
+      --line:rgba(255,255,255,.12);
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:#fff;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.08) 0 2px, transparent 3px),
+        radial-gradient(circle at 70% 20%, rgba(255,255,255,.06) 0 2px, transparent 3px),
+        radial-gradient(circle at 85% 60%, rgba(255,255,255,.06) 0 2px, transparent 3px),
+        radial-gradient(circle at 30% 80%, rgba(255,255,255,.05) 0 2px, transparent 3px),
+        linear-gradient(120deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    /* Floating circles like the screenshot */
+    .orb{
+      position:fixed;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:999px;
+      pointer-events:none;
+      filter: blur(.2px);
+      opacity:.35;
+    }
+    .orb.o1{ width:120px;height:120px; left:40px; top:220px;}
+    .orb.o2{ width:200px;height:200px; right:80px; top:260px;}
+    .orb.o3{ width:140px;height:140px; right:120px; bottom:80px;}
+    .orb.o4{ width:90px;height:90px; left:120px; bottom:140px;}
+
+    /* Top navbar */
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 28px;
+      gap:18px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      letter-spacing:.3px;
+      user-select:none;
+    }
+    .brand .logo{
+      width:44px;height:26px;
+      border:2px solid rgba(255,255,255,.75);
+      border-left-width:10px;
+      border-radius:7px;
+      position:relative;
+    }
+    .brand small{
+      display:block;
+      font-weight:600;
+      opacity:.85;
+      margin-top:2px;
+      letter-spacing:0;
+    }
+
+    .navlinks{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      opacity:.92;
+      font-weight:600;
+      font-size:14px;
+    }
+    .navlinks a{
+      color:#fff;
+      text-decoration:none;
+      padding:8px 10px;
+      border-radius:10px;
+    }
+    .navlinks a:hover{ background:rgba(255,255,255,.08); }
+
+    .cta{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .cta .btn{
+      background:transparent;
+      border:1.5px solid rgba(30,227,181,.8);
+      color:#fff;
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .cta .btn:hover{
+      background:rgba(30,227,181,.12);
+    }
+
+    /* Main layout */
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 20px 34px;
+    }
+
+    .helper-line{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin:12px 0 10px;
+      opacity:.9;
+      font-size:14px;
+    }
+    .helper-line .dot{
+      width:32px;height:32px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      display:grid;
+      place-items:center;
+      font-weight:800;
+    }
+
+    /* Chat card */
+    .chat-row{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin-top:8px;
+    }
+    .avatar{
+      width:36px;height:36px;
+      border-radius:999px;
+      background:rgba(30,227,181,.18);
+      border:1px solid rgba(30,227,181,.45);
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    }
+    .avatar span{
+      font-size:14px;
+      font-weight:900;
+      color:rgba(255,255,255,.95);
+    }
+
+    .card{
+      width:min(760px, 100%);
+      background:var(--card);
+      color:var(--text);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.06);
+    }
+
+    .card-head{
+      padding:16px 18px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .title{
+      font-weight:900;
+      font-size:16px;
+      margin:0;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .title .pill{
+      background:rgba(30,227,181,.14);
+      border:1px solid rgba(30,227,181,.3);
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      color:#0b6b58;
+    }
+
+    .error{
+      margin:10px 18px 0;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#ffe9e9;
+      color:#7a1f1f;
+      border:1px solid #ffc9c9;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .chat-box{
+      padding:14px 18px 18px;
+      max-height:360px;
+      overflow:auto;
+    }
+
+    .msg{
+      display:flex;
+      margin:10px 0;
+      gap:10px;
+    }
+    .bubble{
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:14px;
+      line-height:1.35;
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow: 0 10px 24px rgba(0,0,0,.06);
+      max-width: 92%;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .msg.user{ justify-content:flex-end; }
+    .msg.user .bubble{
+      background:#d9ebff;
+      border-color:#c8e0ff;
+      text-align:left;
+    }
+    .msg.assistant{ justify-content:flex-start; }
+    .msg.assistant .bubble{
+      background:var(--soft);
+    }
+
+    /* Input area */
+    .composer{
+      padding:14px 18px 18px;
+      border-top:1px solid rgba(0,0,0,.08);
+      background:linear-gradient(#ffffff, #fbfcff);
+    }
+    .composer form{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      margin:0;
+    }
+    textarea{
+      width:100%;
+      resize:none;
+      min-height:44px;
+      max-height:120px;
+      padding:12px 12px;
+      font-size:14px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.12);
+      outline:none;
+      background:#fff;
+    }
+    textarea:focus{
+      border-color: rgba(30,227,181,.65);
+      box-shadow: 0 0 0 4px rgba(30,227,181,.12);
+    }
+
+    .send{
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#0e1c2b;
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+      min-width:92px;
+    }
+    .send:hover{ filter:brightness(1.08); }
+
+    .footer-actions{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:10px;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .hint{
+      font-size:12px;
+      color:rgba(0,0,0,.55);
+      font-weight:600;
+    }
+
+    .clear{
+      background:transparent;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:999px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:800;
+      color:#0e1c2b;
+    }
+    .clear:hover{
+      background:rgba(0,0,0,.04);
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 680px){
+      .navlinks{ display:none; }
+      .chat-box{ max-height:46vh; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="orb o4"></div>
+
+  <!-- Top Nav -->
+  <header class="nav">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <div style="font-size:18px; line-height:1;">RAG</div>
+        <small>Medical Assistant</small>
+      </div>
+    </div>
+
+    <nav class="navlinks" aria-label="primary">
+      <a href="#">Solutions</a>
+      <a href="#">Resources</a>
+      <a href="#">About</a>
+    </nav>
+
+    <div class="cta">
+      <button class="btn" type="button">Set Up A Call</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="helper-line">
+      <div class="dot">i</div>
+      <div>hi how u can help me</div>
+    </div>
+
+    <section class="chat-row">
+      <div class="avatar" title="Bot">
+        <span>+</span>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h1 class="title">
+            🩺 AI Medical Chatbot
+            <span class="pill">RAG</span>
+          </h1>
+        </div>
+
+        {% if error %}
+          <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <div id="chat-box" class="chat-box">
+          {% for msg in messages %}
+            <div class="msg {{ msg.role }}">
+              <div class="bubble">
+                <strong>{{ msg.role|capitalize }}:</strong><br />
+                {{ msg.content | safe | nl2br }}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="composer">
+          <form method="post" action="{{ url_for('index') }}">
+            <textarea name="prompt" placeholder="Ask a medical question..." required></textarea>
+            <button class="send" type="submit">Send</button>
+          </form>
+
+          <div class="footer-actions">
+            <div class="hint">Tip: keep questions short for faster answers.</div>
+            <form method="get" action="{{ url_for('clear') }}" style="margin:0;">
+              <button class="clear" type="submit">Clear Chat</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Auto-scroll to latest message
+    const chatBox = document.getElementById("chat-box");
+    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+  </script>
+</body>
+</html>
