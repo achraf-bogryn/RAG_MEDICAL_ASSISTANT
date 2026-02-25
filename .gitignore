@@ -3,3 +3,4 @@ venv/
 vectorstore/
 logs/
 RAG_Medcal_Chatbot.egg-info/
+__pycache__
